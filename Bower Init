@@ -1,0 +1,50 @@
+#!/bin/bash
+
+if [ -z ${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS+x} ]; then
+	echo "Nothing to do!"
+	exit
+fi
+
+OUTPUT=$(zenity --forms --title="Bower Configuration" --text="Enter information about your project:" \
+  --separator="," --add-entry="Name" --add-entry="Description" --add-entry="Main file")
+  
+RETURNED_CODE=$?
+
+# Print some debug information
+echo "Form returned code: $RETURNED_CODE"
+echo "Form output: $OUTPUT"
+
+# Split the output to it's items
+IFS=',' read -r -a CONFIG <<< "$OUTPUT"
+
+# Do the initialization if nothing wrong
+if ((RETURNED_CODE == 0)); then
+
+	zenity --progress --title="Bower Initialize" --width=300 --percentage=0 --pulsate &
+	zpid=$!
+	
+	echo "Initialization progress in id#$zpid";
+
+	while read -r PATH; do
+
+		DIRECTORY=${PATH##*/}
+		DIRECTORY=$(echo "${DIRECTORY,,}")
+
+		echo '{"analytics": false,"directory": "components"}' > "$PATH/.bowerrc"
+		
+		BOWER="{\n"
+		BOWER+="  \"name\": \"${CONFIG[0]}\",\n"
+		BOWER+="  \"description\": \"${CONFIG[1]}\",\n"
+		BOWER+="  \"main\": \"${CONFIG[2]}\",\n"
+		BOWER+="  \"dependencies\": {},\n"
+		BOWER+="  \"devDependencies\": {}\n"
+		BOWER+="}"
+		
+		echo -e "$BOWER" > "$PATH/bower.json"
+		
+	done <<< "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS"
+
+	kill $zpid
+	exit 0
+
+fi

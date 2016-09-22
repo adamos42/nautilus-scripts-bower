@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -z ${NAUTILUS_SCRIPT_SELECTED_FILE_PATHS+x} ]; then
+	echo "Nothing to do!"
+	exit
+fi
+
+( printf '%s/\n' "$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS" | xargs -L 1 bash -c 'cd "$0" && bower update' ) | zenity --progress --title="Bower Update" --text="Updating bower components in your selected folder(s), please wait..." --width=400 --percentage=0 --pulsate --auto-close --auto-kill
