@@ -3,5 +3,7 @@ This repository containts scripts which can add bower functions to the selected 
 
 # Installation
 To install the scripts you need to open `.local/share/nautilus/scripts` folder in your home folder and copy & paste the scripts or cloning the scripts into a folder:
-```cd ~/.local/share/nautilus/scripts
-git clone https://github.com/adamos42/nautilus-scripts-bower Bower```
+```
+cd ~/.local/share/nautilus/scripts
+git clone https://github.com/adamos42/nautilus-scripts-bower Bower
+```
